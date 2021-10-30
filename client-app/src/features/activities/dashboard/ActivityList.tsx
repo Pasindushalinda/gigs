@@ -11,7 +11,6 @@ export default observer(function ActivityList() {
 
     return (
         <>
-
             {groupedActivities.map(([group, activities]) => {
                 return (
                     <Fragment key={group}>
