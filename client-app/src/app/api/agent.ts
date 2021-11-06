@@ -1,3 +1,4 @@
+import { User, UserFormValue } from './../../models/user';
 import { store } from './../stores/store';
 import { Activity } from './../../models/activity';
 import axios, { AxiosError, AxiosResponse } from 'axios';
@@ -11,6 +12,12 @@ const sleep = (delay: number) => {
 }
 
 axios.defaults.baseURL = 'http://localhost:5000/api/';
+
+axios.interceptors.request.use(config => {
+    const token = store.commonStore.token;
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+})
 
 axios.interceptors.response.use(async response => {
     await sleep(1000);
@@ -66,8 +73,15 @@ const Activities = {
     delete: (id: string) => request.delete<void>(`activities/${id}`)
 }
 
+const Account = {
+    current: () => request.get<User>('/account'),
+    login: (user: UserFormValue) => request.post<User>('/account/login', user),
+    register: (user: UserFormValue) => request.post<User>('/account/register', user)
+}
+
 const agent = {
-    Activities
+    Activities,
+    Account
 }
 
 export default agent;
